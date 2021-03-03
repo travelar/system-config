@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if [[ -n "${1}" ]]; then
+    head -1 < "${1}"
+else
+    cat | head -1
+fi

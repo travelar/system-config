@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# Set up miscellaneous variables.
+export CODE=$HOME/src
+
+# Set up the path.
+export PATH=$HOME/bin:$PATH
+export PATH=$HOME/.pyenv/bin:$PATH
+export PATH=/usr/local/go/bin:$PATH
+
+# Disable the AWS pager.
+export AWS_PAGER=""
+
+# Set up the go path.
+export GOPATH=$HOME/go
+
+# Set the default editor.
+export EDITOR="code -w"
+
+# Set the default visual editor.
+export VISUAL="code"
+
+# Set up an nmap log directory path.
+export NMAP_LOGS=$HOME/.nmap/logs
+
+# Export the path to the nix-config repo.
+export NIX_CONFIG=$HOME/src/github.com/carterjones/nix-config
+
+if command -v ksshaskpass &> /dev/null; then
+    SSH_ASKPASS=ksshaskpass ssh-add < /dev/null &>/dev/null
+fi
+
+if [[ $(uname) == Darwin ]] && [[ "${FIX_BREW_OPENSSL}" == "1" ]]; then
+    # Set up variables so the brew installation of openssl will work.
+    export LDFLAGS=-L/usr/local/opt/openssl/lib
+    export CPPFLAGS=-I/usr/local/opt/openssl/include
+fi

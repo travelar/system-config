@@ -1,0 +1,42 @@
+#!/bin/bash
+set -eux -o pipefail
+
+os="???"
+
+if [[ $(uname) == "Darwin" ]]; then
+    os="mac"
+elif grep -q Ubuntu /etc/lsb-release; then
+    os="ubuntu"
+fi
+
+if [[ "${os}" == "???" ]]; then
+    echo "unsupported operating system. bye."
+    exit 1
+fi
+
+if [ ! "$(command -v git)" ]; then
+    if [[ "${os}" == "mac" ]]; then
+        brew install -f git
+    elif [[ "${os}" == "ubuntu" ]]; then
+        sudo apt-get update
+        sudo DEBIAN_FRONTEND=noninteractive apt-get install -y git
+    fi
+fi
+
+if [ ! "$(command -v curl)" ]; then
+    if [[ "${os}" == "ubuntu" ]]; then
+        sudo apt-get update
+        sudo DEBIAN_FRONTEND=noninteractive apt-get install -y curl
+    fi
+fi
+
+echo "building for ${os}"
+go build -o ./bin/cfg ./cmd/cfg
+echo "done"
+
+./bin/cfg
+
+# Run a custom installer if one has been created.
+if [[ -f "${HOME}/bin/install-custom-config" ]]; then
+    "${HOME}/bin/install-custom-config"
+fi
